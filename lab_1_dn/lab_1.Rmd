@@ -65,7 +65,32 @@ shift-cmd-c to comment/uncomment quickly
 # unique(sf_trees$caretaker)
 
 permitted_data_df <- sf_trees %>% 
-  filter(legal_status == "Permitted Site" & caretaker == "MTA")
+  filter(legal_status %in% c("Permitted Site", "Private") & caretaker %in% "MTA")
 ```
 
 **Example 3:** Only keep Blackwood Acacia trees, and then only keep columns `legal_status`, `date`, `latitude`, `longitude` and store as `blackwood_acacia_df` 
+
+```{r}
+blackwood_acacia_df <- sf_trees %>% 
+  filter(str_detect(species, "Blackwood Acacia")) %>% 
+  select(legal_status, date, lat = latitude, lon = longitude)
+
+### Make a little graph of locations 
+ggplot(data = blackwood_acacia_df, aes (x = lon, y = lat)) +
+  geom_point(color = "darkgreen")
+```
+
+**Example 4:** use `tidyr::separate()`
+
+```{r}
+sf_trees_sep <- sf_trees %>% 
+  separate(species, into = c("spp_scientific", "spp_common"), sep = " :: ")
+```
+
+**Example 5:** use `tidyr::unite()`
+
+```{r}
+ex_5 <- sf_trees %>% 
+  unite("id_status", tree_id, legal_status, sep = "_COOL_")
+```
+
